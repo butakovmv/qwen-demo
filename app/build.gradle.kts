@@ -46,11 +46,15 @@ tasks.register("generateGitInfo") {
                 "unknown"
             }
 
-        val props = """
-            git.branch=${runGit("git", "rev-parse", "--abbrev-ref", "HEAD")}
-            git.commit.id=${runGit("git", "rev-parse", "HEAD")}
-            git.commit.time=${Instant.now()}
-        """.trimIndent()
+        val branch = runGit("git", "branch", "--show-current")
+        val commit = runGit("git", "log", "-1", "--format=%H")
+        val commitTime = runGit("git", "log", "-1", "--format=%cI")
+
+        val props = buildString {
+            append("git.branch=").appendLine(if (branch != "unknown" && branch.isNotBlank()) branch else "HEAD")
+            append("git.commit.id=").appendLine(if (commit.isNotEmpty() && commit != "unknown") commit else "unknown")
+            append("git.commit.time=").appendLine(if (commitTime.isNotEmpty() && commitTime != "unknown") commitTime else Instant.now().toString())
+        }
 
         gitPropertiesFile.writeText(props)
     }
@@ -58,10 +62,5 @@ tasks.register("generateGitInfo") {
 
 tasks.bootJar {
     dependsOn("generateGitInfo")
-}
-
-tasks.processResources {
-    from(tasks.named("generateGitInfo").map { it.outputs.files }) {
-        into("META-INF")
-    }
+    from("build/generated/resources")
 }
