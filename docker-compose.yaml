@@ -17,7 +17,7 @@ services:
       start_period: 10s
     develop:
       watch:
-        - path: ./app/build/libs
+        - path: ./app/build/libs/app-0.0.1-SNAPSHOT.jar
           target: /app/app.jar
           action: sync+restart
 

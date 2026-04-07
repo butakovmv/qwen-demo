@@ -49,5 +49,8 @@ swagger: ## Открыть Swagger UI
 
 dev: ## Режим разработки: watch за артефактами и авторестарт
 	$(GRADLEW) :app:bootJar :front:tarDist
-	$(COMPOSE) up --build -d backend frontend
-	trap '$(COMPOSE) down' EXIT; $(COMPOSE) watch
+	touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar
+	$(COMPOSE) up -d backend frontend
+	@echo "Запущен watch режим. Нажмите Ctrl+C для остановки."
+	@echo "Для пересборки backend: ./gradlew :app:bootJar && touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar"
+	@$(COMPOSE) watch || $(COMPOSE) down

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1")
-@Tag(name = "Hello World", description = "API для приветствия")
+@Tag(name = "Hello World", description = "API для приветствия — тест watch v3")
 internal class HelloWorldController(
     private val helloWorldOperation: HelloWorldOperation,
 ) {
