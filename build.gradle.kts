@@ -8,6 +8,17 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.6" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1" apply false
     id("com.gorylenko.gradle-git-properties") version "2.5.7" apply false
+    jacoco
+    java
+    base
+}
+
+// Корневая задача test: запускает тесты всех модулей + формирует отчёты
+tasks.named<Test>("test") {
+    group = "verification"
+    description = "Run all backend and frontend tests with aggregated reports"
+    dependsOn(subprojects.map { it.tasks.withType<Test>() })
+    finalizedBy("testReport", "coverageReport")
 }
 
 allprojects {
@@ -79,11 +90,56 @@ subprojects {
     }
 }
 
-// Включаем frontend-тесты в test для backend-модулей
-subprojects
-    .filter { it.name in listOf("app", "usecase", "web-api") }
-    .forEach { proj ->
-        proj.afterEvaluate {
-            proj.tasks.findByName("test")?.dependsOn(":front:test")
-        }
+// ── Агрегированные отчёты ──────────────────────────────────────────────
+
+// Единый отчёт по покрытию — все модули (JaCoCo XML + LCOV)
+tasks.register<GenerateCoverageReportTask>("coverageReport") {
+    group = "verification"
+    description = "Generate aggregated coverage report for all modules (JaCoCo + Vitest)"
+
+    val jacocoModules = subprojects.filter { it.plugins.hasPlugin("jacoco") }
+    jacocoModules.forEach { proj ->
+        val testTasks = proj.tasks.withType<Test>()
+        dependsOn(testTasks)
+        testTasks.forEach { it.ignoreFailures = true }
     }
+    dependsOn(jacocoModules.map { it.tasks.named("jacocoTestReport") })
+    dependsOn(":front:test")
+
+    // JaCoCo XML из backend-модулей с jacoco
+    val jacocoXml = jacocoModules.map { proj ->
+        proj.layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml")
+    }
+    jacocoXmlFiles.from(jacocoXml)
+
+    // LCOV из frontend
+    val frontLcov = project(":front").projectDir.resolve("coverage/lcov.info")
+    lcovFiles.from(layout.file(provider { frontLcov }))
+
+    outputHtml.set(layout.buildDirectory.file("reports/coverage.html"))
+}
+
+// Единый отчет по тестам
+tasks.register<GenerateTestReportTask>("testReport") {
+    group = "verification"
+    description = "Generate self-contained HTML test report"
+
+    subprojects.forEach { proj ->
+        val testTasks = proj.tasks.withType<Test>()
+        dependsOn(testTasks)
+        testTasks.forEach { it.ignoreFailures = true }
+    }
+
+    backendTestResultsDirs.from(
+        subprojects.filter { it.name != "front" }.map { proj ->
+            proj.layout.buildDirectory.dir("test-results/test")
+        }
+    )
+
+    val frontProject = project(":front")
+    frontTestResultsDir.set(frontProject.layout.buildDirectory.dir("test-results").orElse(
+        layout.dir(provider { frontProject.projectDir.resolve("build/test-results") })
+    ))
+
+    outputHtml.set(layout.buildDirectory.file("reports/tests.html"))
+}

@@ -6,15 +6,15 @@
 
 ## Содержание
 ```
-src/main/kotlin/ru/otus/operation/
-├── *Operation.kt          ← интерфейс операции
+src/main/kotlin/miotaxi/aidemo/operation/
+├── *Operation.kt              ← интерфейс операции (публичный)
 │     interface *Operation
-│       interface Request           ← аргументы (data class)
+│       interface Request?          ← аргументы (data class/interface), может отсутствовать
 │       interface Response          ← результат (interface)
-│       suspend fun execute(req): Response
+│       suspend fun execute(): Response
 │
-└── *OperationImpl.kt      ← реализация
-      @Component class *OperationImpl
+└── *OperationImpl.kt          ← реализация (internal)
+      @Component internal class *OperationImpl
         data class *ResponseImpl : Response
 ```
 ## Подход к расположению
@@ -42,11 +42,29 @@ src/main/kotlin/ru/otus/operation/
 `Request`, `Response`, `execute()`. Реализации инкапсулированы в `*Impl`-файле.
 
 
+## Языки и фреймворки
+
+| Категория | Технология | Версия |
+|---|---|---|
+| Язык | Kotlin | 2.1.10 |
+| JVM-плагин | kotlin("jvm") | 2.1.10 |
+| Spring-плагин | kotlin("plugin.spring") | 2.1.10 |
+| Kotlinx Coroutines Core | kotlinx-coroutines-core | 1.9.0 |
+| Spring Context | spring-context | 6.2.1 |
+| Тестовый фреймворк | JUnit 5 | 5.11.0 |
+| Coroutines Test | kotlinx-coroutines-test | 1.9.0 |
+| ktlint | org.jlleitschuh.gradle.ktlint | 12.3.0 |
+
+## Зависимости
+- **Не зависит** от других модулей проекта (самый нижний слой)
+- **Зависимости (runtime):** `kotlin-stdlib`, `kotlinx-coroutines-core`, `spring-context` (только аннотации, без Boot)
+- **Зависимости (тесты):** `kotlinx-coroutines-test`, `junit-jupiter`
+
 ## Связи
-Не зависит от прочих модулей. Зависит только от стандартной библиотеки Kotlin, coroutines и Spring Context (для `@Component`).
+Не зависит от прочих модулей. Используется модулями `web-api` (контроллеры вызывают Use Case) и `app` (composition root). Зависит только от стандартной библиотеки Kotlin, coroutines и Spring Context (для `@Component`).
 
 ## Сборка
-Собирается в jar через `./gradlew :operation:assemble`.
+Собирается в JAR-библиотеку через `./gradlew :operation:assemble`. Не является самостоятельным приложением — подключается как зависимость в `web-api` и `app`.
 
 ## Тесты
-Содержит юнит-тесты бизнес-логики операций на JUnit 5 и coroutines-test.
+Юнит-тесты бизнес-логики на JUnit 5 + `kotlinx-coroutines-test` (`runTest`). Тесты проверяют корректность выполнения операций и структуру ответа. Запуск: `./gradlew :operation:test`.

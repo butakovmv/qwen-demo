@@ -38,6 +38,9 @@ front/.nuxt/
 # Docker
 otus.tar.gz
 
+# Coverage reports
+front/coverage/
+
 # Qwen
 .qwen/
 
