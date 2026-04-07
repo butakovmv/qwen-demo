@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./app
+    container_name: aidemo-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - aidemo-net
+    develop:
+      watch:
+        - path: ./app/build/libs
+          target: /app/app.jar
+          action: sync+restart
+
+  frontend:
+    build: ./front
+    container_name: aidemo-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - aidemo-net
+
+networks:
+  aidemo-net:
+    driver: bridge
