@@ -4,6 +4,10 @@ server:
 spring:
   application:
     name: otus-backend
+  security:
+    user:
+      name: test
+      password: ${ADMIN_PASSWORD:test}
 
 springdoc:
   api-docs:
@@ -12,15 +16,18 @@ springdoc:
     path: /swagger-ui.html
 
 management:
+  server:
+    port: 8081
+    address: 0.0.0.0
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
   info:
     git:
-      mode: full
+      mode: simple
     build:
       enabled: true

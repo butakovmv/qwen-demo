@@ -4,12 +4,13 @@ services:
     container_name: aidemo-backend
     ports:
       - "81:8080"
+      - "82:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - aidemo-net
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081/actuator/health"]
       interval: 5s
       timeout: 3s
       retries: 30
@@ -29,12 +30,25 @@ services:
       - backend
     networks:
       - aidemo-net
+    develop:
+      watch:
+        - path: ./front/dist
+          target: /usr/share/nginx/html
+          action: sync
+        - path: ./front/nginx.conf
+          target: /etc/nginx/conf.d/default.conf
+          action: sync+restart
 
   smoke-test:
     build: ./ui-test
     container_name: aidemo-smoke-test
+    restart: "no"
     environment:
       - BASE_URL=http://frontend
+      - BACKEND_URL=http://backend:8080
+      - MANAGEMENT_URL=http://backend:8081
+      - ADMIN_USER=test
+      - ADMIN_PASSWORD=test
     depends_on:
       frontend:
         condition: service_started
@@ -42,6 +56,11 @@ services:
         condition: service_healthy
     networks:
       - aidemo-net
+    develop:
+      watch:
+        - path: ./ui-test/tests
+          target: /app/tests/
+          action: sync+restart
 
 networks:
   aidemo-net:

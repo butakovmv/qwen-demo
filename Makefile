@@ -46,3 +46,8 @@ ci: ## Полный CI-пайплайн: clean → lint → test → smoke-test
 swagger: ## Открыть Swagger UI
 	@xdg-open http://localhost:81/swagger-ui.html 2>/dev/null || \
 		echo "Откройте: http://localhost:81/swagger-ui.html"
+
+dev: ## Режим разработки: watch за артефактами и авторестарт
+	$(GRADLEW) :app:bootJar :front:tarDist
+	$(COMPOSE) up --build -d backend frontend
+	trap '$(COMPOSE) down' EXIT; $(COMPOSE) watch
