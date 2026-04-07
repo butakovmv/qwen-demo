@@ -7,6 +7,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.6" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1" apply false
+    id("com.gorylenko.gradle-git-properties") version "2.5.7" apply false
 }
 
 allprojects {

@@ -9,17 +9,19 @@ class HelloWorldOperationImplTest {
     private val operation = HelloWorldOperationImpl()
 
     @Test
-    fun `execute returns HelloResponseImpl with expected message`() = runTest {
-        val result = operation.execute()
+    fun `execute returns HelloResponseImpl with expected message`() =
+        runTest {
+            val result = operation.execute()
 
-        assertTrue(result is HelloWorldOperationImpl.HelloResponseImpl)
-        assertEquals("Hello, World!", result.message)
-    }
+            assertTrue(result is HelloWorldOperationImpl.HelloResponseImpl)
+            assertEquals("Hello, World!", result.message)
+        }
 
     @Test
-    fun `execute returns non-empty message`() = runTest {
-        val result = operation.execute()
+    fun `execute returns non-empty message`() =
+        runTest {
+            val result = operation.execute()
 
-        assertTrue(result.message.isNotBlank())
-    }
+            assertTrue(result.message.isNotBlank())
+        }
 }

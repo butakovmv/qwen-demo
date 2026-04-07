@@ -10,7 +10,6 @@
 | **Spring WebFlux** | 3.4.1 | Реактивный HTTP |
 | **Kotlin Coroutines** | 1.9.0 | Асинхронность (`suspend fun`) |
 | **Jackson** | — | Сериализация JSON (`jackson-module-kotlin`) |
-| **springdoc-openapi** | 2.7.0 | Swagger UI |
 
 ### Тестирование
 

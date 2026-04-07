@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class ApplicationContextTest {
+    @Suppress("EmptyFunctionBlock")
     @Test
-    fun `context loads successfully`() {
-    }
+    fun `context loads successfully`() {}
 }

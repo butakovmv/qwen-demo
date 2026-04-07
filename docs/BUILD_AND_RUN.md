@@ -39,8 +39,8 @@
 
 | Что | Где |
 |---|---|
-| Swagger UI | `http://localhost:8080/swagger-ui/index.html` |
-| OpenAPI spec (JSON) | `http://localhost:8080/v3/api-docs` |
+| Backend API | `http://localhost:8080` |
+| Frontend | `http://localhost:3000` |
 | Actuator | `http://localhost:8080/actuator` |
 
 

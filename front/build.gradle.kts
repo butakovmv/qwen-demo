@@ -22,6 +22,7 @@ tasks.register<Exec>("npmLint") {
     description = "Run ESLint for frontend"
     workingDir = projectDir
     commandLine("npm", "run", "lint:check")
+    dependsOn(npmInstall)
 }
 
 tasks.register<Exec>("npmFormatCheck") {
@@ -29,6 +30,7 @@ tasks.register<Exec>("npmFormatCheck") {
     description = "Run Prettier check for frontend"
     workingDir = projectDir
     commandLine("npm", "run", "format:check")
+    dependsOn(npmInstall)
 }
 
 tasks.register<Exec>("npmFormatFix") {
@@ -43,6 +45,7 @@ tasks.register<Exec>("test") {
     description = "Run vitest for frontend"
     workingDir = projectDir
     commandLine("npm", "run", "test")
+    dependsOn(npmInstall)
 }
 
 val tarDist by tasks.registering(Tar::class) {

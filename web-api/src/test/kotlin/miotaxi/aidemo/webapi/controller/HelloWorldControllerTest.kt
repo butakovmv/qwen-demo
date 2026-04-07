@@ -1,6 +1,7 @@
 package miotaxi.aidemo.webapi.controller
 
 import io.mockk.coEvery
+import miotaxi.aidemo.operation.HelloWorldOperation
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
@@ -8,11 +9,11 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.reactive.server.WebTestClient
-import miotaxi.aidemo.operation.HelloWorldOperation
 
-private fun helloResponse(message: String) = object : HelloWorldOperation.Response {
-    override val message: String = message
-}
+private fun helloResponse(message: String) =
+    object : HelloWorldOperation.Response {
+        override val message: String = message
+    }
 
 @WebFluxTest(HelloWorldController::class)
 @Import(HelloWorldController::class)
