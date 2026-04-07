@@ -8,6 +8,12 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
       - aidemo-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/actuator/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
     develop:
       watch:
         - path: ./app/build/libs
@@ -21,6 +27,19 @@ services:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - aidemo-net
+
+  smoke-test:
+    build: ./ui-test
+    container_name: aidemo-smoke-test
+    environment:
+      - BASE_URL=http://frontend
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
     networks:
       - aidemo-net
 

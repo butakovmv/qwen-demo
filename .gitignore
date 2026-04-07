@@ -41,6 +41,11 @@ otus.tar.gz
 # Coverage reports
 front/coverage/
 
+# Playwright
+ui-test/test-results/
+ui-test/build/
+ui-test/node_modules/
+
 # Qwen
 .qwen/
 
