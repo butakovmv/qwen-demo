@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=aidemo
       - POSTGRES_PASSWORD=aidemo
     ports:
-      - "5432:5432"
+      - "83:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -25,7 +25,7 @@ services:
       - "81:8080"
       - "82:8081"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_PROFILES_ACTIVE=pg
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/aidemo
       - SPRING_R2DBC_USERNAME=aidemo
       - SPRING_R2DBC_PASSWORD=aidemo

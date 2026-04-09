@@ -16,19 +16,11 @@ import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
 @Configuration
 @EnableAutoConfiguration
 internal class PostgresTestConfig {
-    init {
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
-                java.io.File("r2dbc:h2:mem:").parentFile?.listFiles()?.forEach { it.delete() }
-            },
-        )
-    }
-
     @Bean
     fun connectionFactory(): ConnectionFactory {
         val config =
             io.r2dbc.h2.H2ConnectionConfiguration.Builder()
-                .url("r2dbc:h2:mem://testdb;DB_CLOSE_DELAY=10;MODE=PostgreSQL")
+                .url("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL")
                 .build()
         return io.r2dbc.h2.H2ConnectionFactory(config)
     }

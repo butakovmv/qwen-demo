@@ -1,9 +1,0 @@
-# Профиль local — подключение к локальному PostgreSQL
-# Для использования: запустите PostgreSQL локально (port 5432) или через Docker:
-#   docker run --name aidemo-pg -e POSTGRES_DB=aidemo -e POSTGRES_USER=aidemo -e POSTGRES_PASSWORD=aidemo -p 5432:5432 -d postgres:16-alpine
-
-spring:
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/aidemo
-    username: aidemo
-    password: aidemo

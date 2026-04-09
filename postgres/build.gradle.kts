@@ -16,7 +16,13 @@ jacoco {
 }
 
 tasks.test {
+    val postgresDir = project.projectDir
     finalizedBy(tasks.jacocoTestReport)
+    // костыль, чистящий временные файлы бд после прогонов
+    doLast {
+        postgresDir.listFiles { f -> f.name.startsWith("r2dbc") }
+            ?.forEach { file -> file.deleteRecursively() }
+    }
 }
 
 tasks.jacocoTestReport {

@@ -4,12 +4,6 @@ server:
 spring:
   application:
     name: otus-backend
-  # Исключаем R2DBC автоконфигурацию по умолчанию (активируется через профили local/docker)
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration
-      - org.springframework.boot.autoconfigure.r2dbc.R2dbcDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.r2dbc.R2dbcTransactionManagerAutoConfiguration
   security:
     user:
       name: test
