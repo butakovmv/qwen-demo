@@ -11,6 +11,7 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":operation"))
+    implementation(project(":postgres"))
     implementation(project(":web-api"))
     implementation(project(":app"))
 

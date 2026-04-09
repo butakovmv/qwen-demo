@@ -5,6 +5,8 @@
 *.jar
 *.war
 *.ear
+# Except PlantUML rendering tool
+!tools/plantuml.jar
 *.class
 *.log
 build/

@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: OTUS Demo API
+  description: REST API для демонстрационного проекта OTUS
+  version: 1.0.0
+  contact:
+    name: OTUS Team
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Questions
+    description: API для работы с вопросами
+  - name: Answers
+    description: API для работы с ответами
+
+paths:
+  /api/v1/questions:
+    get:
+      tags:
+        - Questions
+      summary: Получить список всех вопросов
+      description: Возвращает список всех доступных вопросов. Авторизация не требуется.
+      operationId: getQuestions
+      responses:
+        '200':
+          description: Успешное получение списка вопросов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionsResponse'
+              example:
+                questions:
+                  - id: "550e8400-e29b-41d4-a716-446655440000"
+                    text: "What is your name?"
+                  - id: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+                    text: "What is your quest?"
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /api/v1/answers:
+    post:
+      tags:
+        - Answers
+      summary: Отправить ответы на вопросы
+      description: Принимает список ответов и сохраняет их. Авторизация не требуется.
+      operationId: sendAnswers
+      requestBody:
+        description: Список ответов для отправки
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnswersRequest'
+            example:
+              answers:
+                - id: "550e8400-e29b-41d4-a716-446655440000"
+                  text: "My name is Sir Lancelot"
+      responses:
+        '200':
+          description: Ответы успешно сохранены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnswersResponse'
+              example:
+                success: true
+        '400':
+          description: Неверный формат запроса
+        '500':
+          description: Внутренняя ошибка сервера
+
+components:
+  schemas:
+    QuestionsResponse:
+      type: object
+      required:
+        - questions
+      properties:
+        questions:
+          type: array
+          description: Список вопросов
+          items:
+            $ref: '#/components/schemas/QuestionDto'
+
+    QuestionDto:
+      type: object
+      required:
+        - id
+        - text
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор вопроса (UUID)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        text:
+          type: string
+          description: Текст вопроса
+          example: "What is your name?"
+
+    AnswersRequest:
+      type: object
+      required:
+        - answers
+      properties:
+        answers:
+          type: array
+          description: Список ответов
+          items:
+            $ref: '#/components/schemas/AnswerDto'
+
+    AnswerDto:
+      type: object
+      required:
+        - id
+        - text
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Идентификатор вопроса, на который даётся ответ (UUID)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        text:
+          type: string
+          description: Текст ответа
+          example: "My name is Sir Lancelot"
+
+    AnswersResponse:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          description: Флаг успешности операции
+          example: true

@@ -1,0 +1,8 @@
+# Профиль docker — подключение к PostgreSQL в Docker
+# Переменные SPRING_R2DBC_* задаются в docker-compose.yaml
+
+spring:
+  r2dbc:
+    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/aidemo}
+    username: ${SPRING_R2DBC_USERNAME:aidemo}
+    password: ${SPRING_R2DBC_PASSWORD:aidemo}

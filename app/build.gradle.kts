@@ -31,6 +31,7 @@ tasks.withType<Test> {
 
 dependencies {
     implementation(project(":operation"))
+    implementation(project(":postgres"))
     implementation(project(":web-api"))
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")

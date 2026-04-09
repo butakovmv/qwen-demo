@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+#
+# Git pre-commit hook: линтит (с автоисправлением) и запускает тесты
+# только для файлов, затронутых staged-изменениями.
+#
+# Порядок:
+#   1. Линтеры (ktlintFormat + Prettier fix) — автоисправление
+#   2. Линтеры проверка (ktlintCheck + detekt + ESLint) — жёсткие ошибки
+#   3. Тесты (impactTest --staged) — только затронутые тесты
+#
+# Установка: make install-hooks
+
+set -e
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+echo "=== Pre-commit: Lint & Test ==="
+echo ""
+
+# Проверяем есть ли staged-файлы
+STAGED_COUNT=$(git diff --cached --name-only --diff-filter=ACMR | wc -l | tr -d ' ')
+
+if [ "$STAGED_COUNT" -eq 0 ]; then
+    echo "No staged files to check."
+    exit 0
+fi
+
+# ──────────────────────────────────────────────
+# Шаг 1: Автоисправление форматирования
+# ──────────────────────────────────────────────
+echo ">>> Step 1: Auto-fix formatting..."
+
+# Backend: ktlint format
+"$ROOT_DIR/gradlew" ktlintFormat -q 2>&1 || true
+
+# Frontend: Prettier fix
+"$ROOT_DIR/gradlew" :front:npmFormatFix -q 2>&1 || true
+
+# Re-stage изменённые файлы (автоисправления)
+git add -u
+
+echo "    Formatting auto-fixed and re-staged."
+echo ""
+
+# ──────────────────────────────────────────────
+# Шаг 2: Проверка линтеров (без автоисправления)
+# ──────────────────────────────────────────────
+echo ">>> Step 2: Lint check..."
+
+LINT_FAILED=0
+
+if ! "$ROOT_DIR/gradlew" ktlintCheck detekt -q 2>&1; then
+    echo "    Backend lint FAILED (ktlint/detekt)"
+    LINT_FAILED=1
+else
+    echo "    Backend lint OK"
+fi
+
+if ! "$ROOT_DIR/gradlew" :front:npmLint :front:npmFormatCheck -q 2>&1; then
+    echo "    Frontend lint FAILED (ESLint/Prettier)"
+    LINT_FAILED=1
+else
+    echo "    Frontend lint OK"
+fi
+
+echo ""
+
+if [ "$LINT_FAILED" -ne 0 ]; then
+    echo "=== Pre-commit check FAILED (lint errors) ==="
+    echo "Fix lint errors before committing."
+    exit 1
+fi
+
+# ──────────────────────────────────────────────
+# Шаг 3: Тесты (только затронутые staged-файлами)
+# ──────────────────────────────────────────────
+echo ">>> Step 3: Impact test analysis..."
+
+OUTPUT=$("$ROOT_DIR/gradlew" :impactTest --staged 2>&1)
+EXIT_CODE=$?
+
+echo "$OUTPUT"
+echo ""
+
+# Если impactTest упал — фоллбэк на полный прогон
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "=== Pre-commit: impact analysis failed ==="
+    echo "Falling back to full test suite"
+    "$ROOT_DIR/gradlew" :test
+    exit $?
+fi
+
+# Извлекаем список тестов
+TESTS=$(echo "$OUTPUT" | sed -n '/^Tests to run/,/^$/p' | grep '^  :' | sed 's/^  //')
+
+if [ -z "$TESTS" ]; then
+    echo "No tests to run based on staged files."
+    exit 0
+fi
+
+echo "Running ${TESTS//$'\n'/', '}"
+echo ""
+
+# Запускаем тесты (quiet mode)
+FAILED=0
+for TEST in $TESTS; do
+    echo "--- $TEST ---"
+    if ! "$ROOT_DIR/gradlew" "$TEST" -q 2>&1; then
+        FAILED=1
+        echo ">>> FAILED: $TEST"
+    else
+        echo ">>> OK: $TEST"
+    fi
+    echo ""
+done
+
+if [ "$FAILED" -ne 0 ]; then
+    echo "=== Pre-commit check FAILED (tests) ==="
+    echo "Fix the failing tests before committing."
+    exit 1
+fi
+
+echo "=== Pre-commit check PASSED ==="
+exit 0

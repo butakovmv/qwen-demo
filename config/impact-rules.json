@@ -1,0 +1,58 @@
+{
+  ":test": {
+    "description": "All tests (full suite)",
+    "patterns": [
+      "^buildSrc/",
+      "^config/",
+      "^(build\\.gradle\\.kts|settings\\.gradle\\.kts|gradle\\.properties|Makefile|docker-compose\\.yaml)$",
+      "Dockerfile$",
+      "/build\\.gradle\\.kts$"
+    ]
+  },
+  ":operation:test": {
+    "description": "Operation unit tests",
+    "patterns": [
+      "^operation/"
+    ]
+  },
+  ":postgres:test": {
+    "description": "Postgres repository integration tests",
+    "patterns": [
+      "^postgres/"
+    ]
+  },
+  ":web-api:test": {
+    "description": "Web-API controller tests",
+    "patterns": [
+      "^web-api/"
+    ]
+  },
+  ":app:test": {
+    "description": "App integration/context tests",
+    "patterns": [
+      "^app/"
+    ]
+  },
+  ":arch-tests:test": {
+    "description": "Architecture constraint tests",
+    "patterns": [
+      "^arch-tests/",
+      "^operation/src/main/",
+      "^postgres/src/main/",
+      "^web-api/src/main/",
+      "^app/src/main/"
+    ]
+  },
+  ":front:test": {
+    "description": "Frontend component tests (Vitest)",
+    "patterns": [
+      "^front/"
+    ]
+  },
+  ":ui-test:uiTest": {
+    "description": "UI E2E smoke tests (Playwright)",
+    "patterns": [
+      "^ui-test/"
+    ]
+  }
+}

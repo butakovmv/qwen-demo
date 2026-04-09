@@ -1,4 +1,4 @@
-.PHONY: clean build test lint start stop logs smoke-test ci swagger help
+.PHONY: clean build test lint start stop logs smoke-test ci swagger help install-hooks
 
 GRADLEW := ./gradlew
 COMPOSE := docker compose
@@ -21,15 +21,9 @@ lint: ## Запустить линтеры
 	$(GRADLEW) lint
 	$(GRADLEW) fix
 
-start: ## Запустить сервисы (пересборка)
+demo: ## Запустить сервисы (пересборка)
 	$(GRADLEW) :app:bootJar :front:tarDist
-	$(COMPOSE) up --build -d
-
-stop: ## Остановить сервисы
-	$(COMPOSE) down
-
-logs: ## Логи контейнеров
-	$(COMPOSE) logs -f
+	$(COMPOSE) up --build
 
 smoke-test: ## Поднять всё в Docker → smoke-тесты → остановить
 	$(GRADLEW) :app:bootJar :front:tarDist
@@ -48,9 +42,15 @@ swagger: ## Открыть Swagger UI
 		echo "Откройте: http://localhost:81/swagger-ui.html"
 
 dev: ## Режим разработки: watch за артефактами и авторестарт
+	$(GRADLEW) lint -t
 	$(GRADLEW) :app:bootJar :front:tarDist
 	touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar
 	$(COMPOSE) up -d backend frontend
 	@echo "Запущен watch режим. Нажмите Ctrl+C для остановки."
 	@echo "Для пересборки backend: ./gradlew :app:bootJar && touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar"
 	@$(COMPOSE) watch || $(COMPOSE) down
+
+install-hooks: ## Установить git pre-commit hook
+	cp hooks/pre-commit .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+	@echo "Pre-commit hook installed."

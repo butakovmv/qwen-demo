@@ -1,3 +1,4 @@
+import impact.ImpactTestTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -142,4 +143,27 @@ tasks.register<GenerateTestReportTask>("testReport") {
     ))
 
     outputHtml.set(layout.buildDirectory.file("reports/tests.html"))
+}
+
+// ── PlantUML rendering ──────────────────────────────────────────────────
+
+tasks.register<RenderPlantumlTask>("renderPlantuml") {
+    group = "documentation"
+    description = "Render all .puml files from docs/ to SVG using local PlantUML JAR"
+
+    inputDir.set(layout.projectDirectory.dir("docs"))
+    // Use local PlantUML JAR if available, fallback to remote server
+    val plantumlJarPath = rootProject.rootDir.resolve("tools/plantuml.jar")
+    if (plantumlJarPath.exists()) {
+        plantumlJar.set(layout.projectDirectory.file("tools/plantuml.jar"))
+    }
+    plantumlServer.set("https://www.plantuml.com/plantuml")
+}
+
+// ── Impact-based test selection ─────────────────────────────────────────
+
+tasks.register<ImpactTestTask>("impactTest") {
+    group = "verification"
+    description = "Run only tests affected by changed files (git diff-based impact analysis)"
+    rulesFile.set(layout.projectDirectory.file("config/impact-rules.json"))
 }
