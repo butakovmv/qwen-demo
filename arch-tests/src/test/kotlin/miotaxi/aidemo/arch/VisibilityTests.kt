@@ -123,8 +123,9 @@ class VisibilityTests {
     fun `usecase module should not depend on spring-web`() {
         val usecaseClasses =
             allClasses.filter {
-                it.packageName.startsWith("miotaxi.aidemo.operation") ||
-                    it.packageName.startsWith("miotaxi.aidemo.model")
+                it.isUseCaseInterface() ||
+                    it.isUseCaseImpl() ||
+                    it.simpleName.endsWith("Repository") && it.isInterface
             }
 
         val springWebDeps = mutableSetOf<String>()

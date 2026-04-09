@@ -27,6 +27,7 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
+    testImplementation("io.mockk:mockk:1.13.13")
 }
 
 tasks.withType<Test> {

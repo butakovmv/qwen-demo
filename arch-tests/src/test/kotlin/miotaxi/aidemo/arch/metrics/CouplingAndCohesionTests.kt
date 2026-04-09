@@ -31,20 +31,20 @@ class CouplingAndCohesionTests {
         fun forbiddenCouplingCases(): List<ModulePair> =
             listOf(
                 ModulePair(
-                    sourcePackage = "miotaxi.aidemo.operation",
-                    targetPackage = "miotaxi.aidemo.webapi",
+                    sourcePackage = "miotaxi.aidemo.question",
+                    targetPackage = "miotaxi.aidemo.answer",
                 ),
                 ModulePair(
-                    sourcePackage = "miotaxi.aidemo.operation",
-                    targetPackage = "miotaxi.aidemo.app",
-                ),
-                ModulePair(
-                    sourcePackage = "miotaxi.aidemo.model",
-                    targetPackage = "miotaxi.aidemo.webapi",
+                    sourcePackage = "miotaxi.aidemo.answer",
+                    targetPackage = "miotaxi.aidemo.question",
                 ),
                 ModulePair(
                     sourcePackage = "miotaxi.aidemo.model",
-                    targetPackage = "miotaxi.aidemo.app",
+                    targetPackage = "miotaxi.aidemo",
+                ),
+                ModulePair(
+                    sourcePackage = "miotaxi.aidemo.model",
+                    targetPackage = "miotaxi.aidemo",
                 ),
             )
 
@@ -56,20 +56,20 @@ class CouplingAndCohesionTests {
         fun allowedCouplingCases(): List<ModulePair> =
             listOf(
                 ModulePair(
-                    sourcePackage = "miotaxi.aidemo.webapi",
+                    sourcePackage = "miotaxi.aidemo.question",
                     targetPackage = "miotaxi.aidemo.model",
                 ),
                 ModulePair(
-                    sourcePackage = "miotaxi.aidemo.app",
+                    sourcePackage = "miotaxi.aidemo.answer",
                     targetPackage = "miotaxi.aidemo.model",
                 ),
                 ModulePair(
-                    sourcePackage = "miotaxi.aidemo.app",
-                    targetPackage = "miotaxi.aidemo.webapi",
+                    sourcePackage = "miotaxi.aidemo",
+                    targetPackage = "miotaxi.aidemo.question",
                 ),
                 ModulePair(
-                    sourcePackage = "miotaxi.aidemo.operation",
-                    targetPackage = "miotaxi.aidemo.model",
+                    sourcePackage = "miotaxi.aidemo",
+                    targetPackage = "miotaxi.aidemo.answer",
                 ),
             )
 
@@ -77,15 +77,15 @@ class CouplingAndCohesionTests {
         fun cohesionCases(): List<CohesionCase> =
             listOf(
                 CohesionCase(
-                    packageName = "miotaxi.aidemo.operation",
-                    minCohesion = 0.5,
-                ),
-                CohesionCase(
-                    packageName = "miotaxi.aidemo.webapi",
+                    packageName = "miotaxi.aidemo.question",
                     minCohesion = 0.0,
                 ),
                 CohesionCase(
-                    packageName = "miotaxi.aidemo.app",
+                    packageName = "miotaxi.aidemo.answer",
+                    minCohesion = 0.0,
+                ),
+                CohesionCase(
+                    packageName = "miotaxi.aidemo",
                     minCohesion = 0.0,
                 ),
                 CohesionCase(

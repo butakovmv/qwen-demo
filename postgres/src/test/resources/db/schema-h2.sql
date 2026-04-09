@@ -9,8 +9,3 @@ CREATE TABLE IF NOT EXISTS answers (
     question_id VARCHAR(36) NOT NULL REFERENCES questions(id),
     text        VARCHAR(500) NOT NULL
 );
-
--- Начальные данные: тестовые вопросы
-MERGE INTO questions (id, text) KEY (id) VALUES
-    ('550e8400-e29b-41d4-a716-446655440000', 'What is your name?'),
-    ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'What is your quest?');

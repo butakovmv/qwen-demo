@@ -43,6 +43,8 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("io.r2dbc:r2dbc-h2:1.0.0.RELEASE")
 }
 
 springBoot {

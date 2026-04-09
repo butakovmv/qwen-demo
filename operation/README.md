@@ -6,7 +6,7 @@
 
 ## Содержание
 ```
-src/main/kotlin/miotaxi/aidemo/operation/
+src/main/kotlin/miotaxi.aidemo/
 ├── *Operation.kt              ← интерфейс операции (публичный)
 │     interface *Operation
 │       interface Request?          ← аргументы (data class/interface), может отсутствовать
