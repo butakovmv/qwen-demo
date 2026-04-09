@@ -47,4 +47,5 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }

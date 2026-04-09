@@ -1,12 +1,31 @@
 <template>
   <div class="container">
     <h1>OTUS Application</h1>
-    <button :disabled="loading" @click="fetchHelloWorld">
-      {{ loading ? 'Загрузка...' : 'Получить приветствие' }}
-    </button>
-    <div v-if="message" class="message">
-      <p>{{ message }}</p>
-    </div>
+
+    <section class="section">
+      <h2>Вопросы</h2>
+      <button :disabled="loadingQuestions" @click="loadQuestions">
+        {{ loadingQuestions ? 'Загрузка...' : 'Загрузить вопросы' }}
+      </button>
+      <ul v-if="questions.length" class="questions-list">
+        <li v-for="q in questions" :key="q.id">
+          <strong>{{ q.text }}</strong>
+          <input
+            :id="'answer-' + q.id"
+            v-model="answers[q.id]"
+            type="text"
+            placeholder="Ваш ответ"
+          />
+        </li>
+      </ul>
+      <button v-if="questions.length" :disabled="loadingSend" @click="sendAnswersHandler">
+        {{ loadingSend ? 'Отправка...' : 'Отправить ответы' }}
+      </button>
+      <div v-if="sendSuccess" class="message">
+        <p>Ответы успешно отправлены!</p>
+      </div>
+    </section>
+
     <div v-if="error" class="error">
       <p>{{ error }}</p>
     </div>
@@ -14,30 +33,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import { fetchQuestions, sendAnswers, type Question } from './api'
 
-interface HelloResponse {
-  message: string
-}
-
-const message = ref<string>('')
 const error = ref<string>('')
-const loading = ref<boolean>(false)
+const loadingQuestions = ref<boolean>(false)
+const loadingSend = ref<boolean>(false)
+const questions = ref<Question[]>([])
+const answers = reactive<Record<string, string>>({})
+const sendSuccess = ref<boolean>(false)
 
-const fetchHelloWorld = async () => {
-  loading.value = true
+const loadQuestions = async () => {
+  loadingQuestions.value = true
   error.value = ''
+  sendSuccess.value = false
   try {
-    const response = await fetch('/api/v1/hello-world')
-    if (!response.ok) {
-      throw new Error(`HTTP ошибка: ${response.status}`)
+    const data = await fetchQuestions()
+    questions.value = data.questions
+    for (const q of data.questions) {
+      answers[q.id] = ''
     }
-    const data: HelloResponse = await response.json()
-    message.value = data.message
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Неизвестная ошибка'
   } finally {
-    loading.value = false
+    loadingQuestions.value = false
+  }
+}
+
+const sendAnswersHandler = async () => {
+  loadingSend.value = true
+  error.value = ''
+  sendSuccess.value = false
+  try {
+    const payload = questions.value.map((q) => ({
+      id: q.id,
+      text: answers[q.id] || '',
+    }))
+    await sendAnswers(payload)
+    sendSuccess.value = true
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Неизвестная ошибка'
+  } finally {
+    loadingSend.value = false
   }
 }
 </script>
@@ -49,6 +86,17 @@ const fetchHelloWorld = async () => {
   padding: 20px;
   font-family: Arial, sans-serif;
   text-align: center;
+}
+
+.section {
+  margin-bottom: 32px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+h2 {
+  margin-top: 0;
 }
 
 button {
@@ -79,6 +127,26 @@ button:disabled {
   padding: 16px;
   background-color: #ffebee;
   color: #c62828;
+  border-radius: 4px;
+}
+
+.questions-list {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.questions-list li {
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.questions-list input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
 </style>
