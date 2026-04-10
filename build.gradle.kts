@@ -138,9 +138,9 @@ tasks.register<GenerateTestReportTask>("testReport") {
     )
 
     val frontProject = project(":front")
-    frontTestResultsDir.set(frontProject.layout.buildDirectory.dir("test-results").orElse(
-        layout.dir(provider { frontProject.projectDir.resolve("build/test-results") })
-    ))
+    frontTestResultsDirPath.set(
+        provider { frontProject.layout.buildDirectory.dir("test-results").orNull?.asFile?.absolutePath }
+    )
 
     outputHtml.set(layout.buildDirectory.file("reports/tests.html"))
 }

@@ -1,4 +1,4 @@
-.PHONY: help dev demo release  install-hooks
+.PHONY: help dev demo release commit
 
 GIT := git
 GRADLEW := ./gradlew
@@ -17,15 +17,15 @@ dev: ## Режим разработки: watch за артефактами и а
 	@echo "Для пересборки backend: ./gradlew :app:bootJar && touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar"
 	@$(COMPOSE) watch || $(COMPOSE) down
 
-demo: ## Запустить сервисы (пересборка)
-	$(GRADLEW) :app:bootJar :front:tarDist
+demo: ## Запустить сборку в докере, а затем приложение в докере
+	$(COMPOSE) -f docker-compose.builder.yaml run builder
 	$(COMPOSE) up --build
 
 commit:
 	@echo "===Очистка==="
 	$(COMPOSE) down --volumes --remove-orphans 2>/dev/null || true
-	$(GRADLEW) clean
 	@echo "===Линтеры==="
+	$(GRADLEW) build
 	$(GRADLEW) fix
 	#(GRADLEW) lint
 	@echo "===Тесты==="
@@ -37,9 +37,4 @@ commit:
 	mkdir -p build/reports/
 	docker cp aidemo-smoke-test:/app/build/reports/ui-test/ build/reports/
 	$(COMPOSE) down --volumes --remove-orphans
-	#git commit -m "$(qwen -p 'проанализируй изменения и верни только одну строку - сообщение для коммита, без рассуждений и пояснений' -y)"
-
-install-hooks: ## Установить git pre-commit hook
-	cp hooks/pre-commit .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
-	@echo "Pre-commit hook installed."
+	$(GIT) commit -m "$$(qwen -p 'проанализируй staged изменения и верни только одну строку - сообщение для коммита, без рассуждений и пояснений' -y)"

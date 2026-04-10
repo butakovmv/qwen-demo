@@ -2,11 +2,13 @@ plugins {
     base
 }
 
-val npmInstall by tasks.registering(Exec::class) {
-    group = "build"
-    description = "Install npm dependencies"
-    workingDir = projectDir
-    commandLine("npm", "ci")
+import org.example.front.NpmInstallTask
+
+val npmInstall by tasks.registering(NpmInstallTask::class) {
+    packageFiles.from(file("package.json"), file("package-lock.json"))
+    nodeModulesDir.set(file("node_modules"))
+    workingDir.set(project.projectDir)
+    marker.set(layout.buildDirectory.file("npm-install-marker.txt"))
 }
 
 val npmBuild by tasks.registering(Exec::class) {
@@ -15,6 +17,10 @@ val npmBuild by tasks.registering(Exec::class) {
     workingDir = projectDir
     commandLine("npm", "run", "build")
     dependsOn(npmInstall)
+}
+
+tasks.named<Delete>("clean") {
+    delete("coverage", "dist")
 }
 
 tasks.register<Exec>("npmLint") {

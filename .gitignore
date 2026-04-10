@@ -38,7 +38,8 @@ front/.next/
 front/.nuxt/
 
 # Docker
-otus.tar.gz
+.gradle-cache/
+.gradle-home/
 
 # Coverage reports
 front/coverage/

@@ -2,11 +2,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 data class TestCase(
     val module: String,
@@ -25,9 +27,9 @@ abstract class GenerateTestReportTask : DefaultTask() {
     @get:InputFiles
     abstract val backendTestResultsDirs: ConfigurableFileCollection
 
+    @get:Input
     @get:Optional
-    @get:InputDirectory
-    abstract val frontTestResultsDir: DirectoryProperty
+    abstract val frontTestResultsDirPath: Property<String>
 
     @get:OutputFile
     abstract val outputHtml: RegularFileProperty
@@ -46,8 +48,8 @@ abstract class GenerateTestReportTask : DefaultTask() {
         }
 
         // Frontend
-        if (frontTestResultsDir.isPresent) {
-            val frontDir = frontTestResultsDir.get().asFile
+        if (frontTestResultsDirPath.isPresent) {
+            val frontDir = File(frontTestResultsDirPath.get())
             if (frontDir.exists()) {
                 frontDir.walkTopDown()
                     .filter { it.extension == "xml" }
