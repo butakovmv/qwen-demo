@@ -7,7 +7,7 @@ plugins {
 
 dependencyManagement {
     imports {
-        mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.1")
     }
 }
 

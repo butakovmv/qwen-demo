@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     kotlin("jvm") version "1.9.23" apply false
     kotlin("plugin.spring") version "1.9.23" apply false
-    id("org.springframework.boot") version "3.4.1" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
     id("io.gitlab.arturbosch.detekt") version "1.23.6" apply false
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1" apply false

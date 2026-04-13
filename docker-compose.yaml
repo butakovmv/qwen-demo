@@ -17,7 +17,7 @@ services:
       retries: 10
     networks:
       - aidemo-net
-
+      
   backend:
     build: ./app
     container_name: aidemo-backend
@@ -45,6 +45,9 @@ services:
         - path: ./app/build/libs/app-0.0.1-SNAPSHOT.jar
           target: /app/app.jar
           action: sync+restart
+        - path: ./app/build/libs/lib/
+          target: /app/lib/
+          action: sync
 
   frontend:
     build: ./front
