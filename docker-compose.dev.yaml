@@ -12,6 +12,13 @@ services:
       timeout: 5s
       retries: 30
       start_period: 10s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
   postgres:
     image: postgres:16-alpine
@@ -43,9 +50,9 @@ services:
       - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/aidemo
       - SPRING_R2DBC_USERNAME=aidemo
       - SPRING_R2DBC_PASSWORD=aidemo
-      - LANGCHAIN_OPENAI_BASE_URL=${LANGCHAIN_OPENAI_BASE_URL:-http://ollama:11434/v1}
-      - LANGCHAIN_OPENAI_API_KEY=${LANGCHAIN_OPENAI_API_KEY:-ollama}
-      - LANGCHAIN_OPENAI_MODEL=${LANGCHAIN_OPENAI_MODEL:-qwen3:0.6b}
+      - LANGCHAIN_OPENAI_BASE_URL=http://ollama:11434/v1
+      - LANGCHAIN_OPENAI_API_KEY=ollama
+      - LANGCHAIN_OPENAI_MODEL=qwen3:0.6b
     depends_on:
       ollama:
         condition: service_healthy
@@ -85,6 +92,29 @@ services:
         - path: ./front/nginx.conf
           target: /etc/nginx/conf.d/default.conf
           action: sync+restart
+
+#  smoke-test:
+#    build: ./ui-test
+#    container_name: aidemo-smoke-test
+#    restart: "no"
+#    environment:
+#      - BASE_URL=http://frontend
+#      - BACKEND_URL=http://backend:8080
+#      - MANAGEMENT_URL=http://backend:8081
+#      - ADMIN_USER=test
+#      - ADMIN_PASSWORD=test
+#    depends_on:
+#      frontend:
+#        condition: service_started
+#      backend:
+#        condition: service_healthy
+#    networks:
+#      - aidemo-net
+#    develop:
+#      watch:
+#        - path: ./ui-test/tests
+#          target: /app/tests/
+#          action: sync+restart
 
 networks:
   aidemo-net:

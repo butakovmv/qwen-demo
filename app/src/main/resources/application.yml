@@ -9,11 +9,25 @@ spring:
       name: test
       password: ${ADMIN_PASSWORD:test}
 
+logging:
+  level:
+    miotaxi.aidemo: DEBUG
+    miotaxi.aidemo.naturalLanguage: DEBUG
+    dev.langchain4j.model.openai: DEBUG
+
 springdoc:
   api-docs:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+langchain:
+  openai:
+    base-url: ${LANGCHAIN_OPENAI_BASE_URL:http://localhost:11434/v1}
+    api-key: ${LANGCHAIN_OPENAI_API_KEY:ollama}
+    model-name: ${LANGCHAIN_OPENAI_MODEL:qwen3:0.6b}
+    temperature: ${LANGCHAIN_OPENAI_TEMPERATURE:0.0}
+    timeout-seconds: ${LANGCHAIN_OPENAI_TIMEOUT:60}
 
 management:
   server:

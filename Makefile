@@ -1,21 +1,31 @@
-.PHONY: help dev demo release commit
+.PHONY: help update-back update-front dev logs demo commit
 
 GIT := git
+NPM := npm
 GRADLEW := ./gradlew
 COMPOSE := docker compose
+SRC_FILES := $(wildcard app/src/main/* operation/src/main/* postgres/src/main/* web-api/src/main/* front/src/* front/package*)
 
 help: ## Показать список задач
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) \
 		| awk 'BEGIN { FS = ":.*?## " }; { printf "\033[36m%-20s\033[0m %s\n", $$1, $$2 }'
 
-dev: ## Режим разработки: watch за артефактами и авторестарт
+update: $(SRC_FILES) ## Пересобрать бэк
 	$(GRADLEW) --stop #изредка это стоит делать, иначе жрет оперативку и не возвращает
-	$(GRADLEW) build
+	$(GRADLEW) build -x test
+
+update-back: ## Пересобрать бэк
 	touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar
-	$(COMPOSE) up -d backend frontend
-	@echo "Запущен watch режим. Нажмите Ctrl+C для остановки."
-	@echo "Для пересборки backend: ./gradlew :app:jar :app:copyDependencies && touch ./app/build/libs/app-0.0.1-SNAPSHOT.jar"
-	@$(COMPOSE) watch || $(COMPOSE) down
+
+update-front: $(FRONT_SRC_FILES) ## Пересобрать фронт
+	touch ./front/dist/index.html
+
+dev: update-back update-front ## Режим разработки: watch за артефактами и авторестарт
+	$(COMPOSE) -f docker-compose.dev.yaml up -d
+	$(COMPOSE) -f docker-compose.dev.yaml watch
+
+logs: ## Вывод логов
+	$(COMPOSE) -f docker-compose.dev.yaml logs -f
 
 demo: ## Запустить сборку в докере, а затем приложение в докере
 	$(COMPOSE) -f docker-compose.builder.yaml run builder

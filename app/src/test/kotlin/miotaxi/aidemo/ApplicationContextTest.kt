@@ -2,6 +2,7 @@ package miotaxi.aidemo
 
 import io.mockk.mockk
 import miotaxi.aidemo.answer.AnswersRepository
+import miotaxi.aidemo.langchain.NaturalLanguageCommandService
 import miotaxi.aidemo.question.QuestionsRepository
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,6 +34,7 @@ import org.springframework.test.context.TestPropertySource
 @TestPropertySource(
     properties = [
         "spring.main.allow-bean-definition-overriding=true",
+        "langchain.openai.api-key=test-key",
     ],
 )
 class ApplicationContextTest {
@@ -49,5 +51,9 @@ class ApplicationContextTest {
         @Bean
         @Primary
         internal fun questionsRepository(): QuestionsRepository = mockk()
+
+        @Bean
+        @Primary
+        internal fun naturalLanguageCommandService(): NaturalLanguageCommandService = mockk()
     }
 }

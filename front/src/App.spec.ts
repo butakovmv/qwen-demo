@@ -1,10 +1,36 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import App from '../src/App.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import App from './App.vue'
+import Home from './views/Home.vue'
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [{ path: '/', name: 'Home', component: Home }],
+})
 
 describe('App.vue', () => {
-  it('renders heading and questions button', () => {
-    const wrapper = mount(App)
+  it('renders navigation with two links', async () => {
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: { plugins: [router] },
+    })
+
+    const links = wrapper.findAll('.nav a')
+    expect(links.length).toBe(2)
+    expect(links[0].text()).toBe('Вопросы')
+    expect(links[1].text()).toBe('Естественный язык')
+  })
+
+  it('renders Home view by default', async () => {
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: { plugins: [router] },
+    })
 
     expect(wrapper.find('h1').text()).toBe('OTUS Application')
     expect(wrapper.find('h2').text()).toBe('Вопросы')
@@ -23,7 +49,13 @@ describe('App.vue', () => {
         }),
     })
 
-    const wrapper = mount(App)
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: { plugins: [router] },
+    })
+
     await wrapper.find('button').trigger('click')
     await flushPromises()
 
@@ -38,7 +70,13 @@ describe('App.vue', () => {
       status: 500,
     })
 
-    const wrapper = mount(App)
+    router.push('/')
+    await router.isReady()
+
+    const wrapper = mount(App, {
+      global: { plugins: [router] },
+    })
+
     await wrapper.find('button').trigger('click')
     await flushPromises()
 

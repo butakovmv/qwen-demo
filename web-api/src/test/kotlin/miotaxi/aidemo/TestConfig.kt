@@ -3,6 +3,7 @@ package miotaxi.aidemo
 import io.mockk.mockk
 import miotaxi.aidemo.answer.AnswersRepository
 import miotaxi.aidemo.answer.SendAnswersOperation
+import miotaxi.aidemo.naturalLanguage.SendNaturalLanguageCommandOperation
 import miotaxi.aidemo.question.GetQuestionsOperation
 import miotaxi.aidemo.question.QuestionsRepository
 import org.springframework.boot.test.context.TestConfiguration
@@ -18,6 +19,10 @@ internal class TestConfig {
     @Bean
     @Primary
     internal fun sendAnswersOperation(): SendAnswersOperation = mockk()
+
+    @Bean
+    @Primary
+    internal fun sendNaturalLanguageCommandOperation(): SendNaturalLanguageCommandOperation = mockk()
 
     @Bean
     @Primary

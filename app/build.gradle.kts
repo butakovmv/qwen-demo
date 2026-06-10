@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":operation"))
     implementation(project(":postgres"))
     implementation(project(":web-api"))
+    implementation(project(":lang-chain"))
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-actuator")

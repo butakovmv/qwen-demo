@@ -19,6 +19,8 @@ export default [
         clearTimeout: 'readonly',
         global: 'readonly',
         Response: 'readonly',
+        HTMLElement: 'readonly',
+        sessionStorage: 'readonly',
       },
     },
   },

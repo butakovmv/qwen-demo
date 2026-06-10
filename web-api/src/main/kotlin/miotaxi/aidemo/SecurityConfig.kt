@@ -22,6 +22,7 @@ internal class SecurityConfig {
                         "/actuator/health/**",
                         "/api/v1/questions",
                         "/api/v1/answers",
+                        "/api/v1/natural-language/commands",
                     ).permitAll()
                     .pathMatchers("/actuator/**").authenticated()
                     .pathMatchers("/**").authenticated()
